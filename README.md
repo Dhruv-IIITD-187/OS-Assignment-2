@@ -1,62 +1,68 @@
 # OS-Assignment-2
 
-## Team Members
-- Akshit K Bansal (2024058)
-- Dhruv Agarwal (2024187)
+## Team Member Names
+- Akshit K Bansal (2024058)  
+- Dhruv Agarwal (2024187)  
 
-**Group Number:** 18
+**Group Number:** 18  
 
 ---
 
 ## Contributions
-We discussed the overall approach and divided the work equally between us.  
-All the code files were checked and written by both members.
+- Approach was discussed and work was equally divided between the 2 group members.  
+- All the files with code written were checked and written by both of the members.  
 
 ---
 
 ## Overview
-This project is a simple Unix shell written in C.  
-The shell keeps running in a loop, takes user commands, parses them, executes (with or without pipes), and keeps a history of the commands.
+This project implements a simple Unix shell in C, fulfilling the assignment requirements.  
+The shell continuously waits for user input, parses commands, executes them (with or without pipes), and maintains a command history.  
 
 ---
 
 ## Core Components
 
-1. **launch() method**  
-   - Uses `fork()` to create a child process.  
-   - Child runs the command using `execvp()`.  
-   - Parent waits for the child with `waitpid()`.  
+1. **`launch()` method**  
+   - Creates a child process using `fork()`.  
+   - In the child, uses `execvp()` to execute the command along with its arguments.  
+   - The parent process waits with `waitpid()` for child termination.  
 
 2. **Input Parsing**  
-   - Commands are split by spaces into command + arguments.  
-   - If a pipe `|` is found, the input is broken into separate stages.  
+   - User input is tokenized by spaces to separate command and arguments.  
+   - If pipes (`|`) are present, the input is further split into stages, each executed with proper redirection.  
 
-3. **Pipes**  
-   - `pipe()` is used to connect output of one process to input of the next.  
-   - `dup2()` is used to set up the correct file descriptors.  
+3. **Pipes Handling**  
+   - For each stage in a pipeline, `pipe()` is used to connect `stdout` of one process to `stdin` of the next.  
+   - `dup2()` is used to redirect file descriptors appropriately before `execvp()`.  
 
-4. **History**  
-   - Each entered command is stored in memory.  
-   - Typing `history` shows all past commands.  
-   - On exit, a detailed history is shown with PID, start time, end time and duration.  
+4. **History Management**  
+   - Each command is stored in an in-memory history list.  
+   - Typing `history` prints previously entered commands.  
+   - On exit, a detailed history is shown with: PID, start time, end time, and execution duration.  
 
-5. **Structure**  
-   - `main()` → infinite loop reading input.  
-   - `parse()` → breaks input into tokens.  
-   - `launch()` → executes the commands.  
-   - `add_to_history()` / `show_history()` → manage history.  
+5. **Basic Structure**  
+   - `main()` → infinite loop reading input, checking for built-in commands (e.g., `history`, `exit`), otherwise passing input to parser/launch.  
+   - `parse()` → splits command into tokens and pipelines.  
+   - `launch()` → executes each command.  
+   - `handle_pipes()` → manages multiple commands connected with `|`.  
+   - `add_to_history()` / `show_history()` → manages short and detailed history.  
 
 ---
 
 ## Unsupported Commands
 
-- **cd (change directory)**  
-  `cd` is a built-in shell command, not a binary. Since our shell uses `execvp()` to run external programs, changing directory this way would not affect the parent shell.  
+The following commands are not supported in this shell, with reasons:  
+
+- **`cd` (change directory)**  
+  Reason: `cd` is a shell built-in, not an external binary. Our shell only executes external programs with `execvp()`, so directory changes cannot persist in the parent shell process.  
 
 - **Commands with quotes or backslashes**  
-  Our parser only supports simple space-separated input, so things like `echo "hello world"` won’t work.  
+  Reason: Parsing is restricted to space-delimited tokens, as specified in the assignment.  
+
+- **Commands with quotes or backslashes (e.g., `echo "hello world"`)**  
+  Reason: Input parsing is limited to space-delimited tokens, as specified in the assignment restrictions.  
 
 ---
 
 ## Github Repo Link
-https://github.com/Dhruv-IIITD-187/OS-Assignment-2
+[https://github.com/Dhruv-IIITD-187/OS-Assignment-2](https://github.com/Dhruv-IIITD-187/OS-Assignment-2)
