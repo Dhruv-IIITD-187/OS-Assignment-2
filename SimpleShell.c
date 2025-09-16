@@ -185,15 +185,18 @@ void launch(char cmds_arr[MAX_CMDS][MAX_WORDS][MAX_WORD_SIZE], int word_count[MA
                 dup2(fd[i*2 + 1], STDOUT_FILENO);
             }
 
-            int j = 0;
-            while (j < 2*(num_cmds-1)) { // Closing fds since pipes are already connected above
-                close(fd[j]);
-                j += 1;
+
+            for(int i =0;i < 2*(num_cmds - 1); ++i){  //Closing fds since pipes are already connected above
+                close(fd[i]); 
             }
 
             execvp(exec_args[0], exec_args); // Command execution using execvp
-            perror("execvp failed");
+            perror("execvp has failed");
             exit(1);
+        }
+        else if(pids[i] < 0){ 
+            perror("Fork could not work"); 
+            exit(1); 
         }
         
     }
